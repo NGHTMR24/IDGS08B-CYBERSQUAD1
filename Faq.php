@@ -39,10 +39,8 @@
     <nav>
     <ul>
       <li><a href="inicio.php">Inicio</a></li>
-      <li><a href="cursos.php">Cursos</a></li>
       <li><a href="registrarse.php">Registrarse</a></li>
       <li><a href="login.php">Inicio de session</a></li>
-      <li><a href="contacto.php">Contacto</a></li>
       <li><a href="Faq.php">FAQ</a></li>
     </ul>
     </nav>

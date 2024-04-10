@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="imagenes/">
     <link rel="stylesheet" href="estilos.css">
     <link rel="stylesheet" href="splide.js">
-    <style>
-      /*Inicio*/
-/* Estilos generales */
-body {
+<style>
+ /*Inicio*/
+ /* Estilos generales */
+ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -64,34 +64,34 @@ body {
     color: #fff;
     text-align: center;
     padding: 100px 0;
-}
+ }
 
-.hero h2 {
+ .hero h2 {
     font-size: 36px;
     margin-bottom: 20px;
     color: #fff;
-}
+ }
 
-.hero p {
+ .hero p {
     font-size: 18px;
     margin-bottom: 30px;
-}
+ }
 
-.btn {
+ .btn {
     display: inline-block;
     background-color: #333;
     color: #fff;
     text-decoration: none;
     padding: 10px 20px;
     border-radius: 4px;
-}
+ }
 
   footer {
     background-color: #333;
     color: #fff;
     text-align: center;
     padding: 20px 0;
-}
+ }
 
        .cursos {
       margin-top: 40px;
@@ -137,10 +137,8 @@ body {
     <nav>
     <ul>
                 <li><a href="inicio.php">Inicio</a></li>
-                
                 <li><a href="registrarse.php">Registrarse</a></li>
                 <li><a href="login.php">Inicio de session</a></li>
-                
                 <li><a href="Faq.php">FAQ</a></li>
           </ul>
     </nav>
@@ -151,7 +149,7 @@ body {
         <div class="container">
             <h2>Aprende nuevas habilidades con nuestros cursos profesionales</h2>
             <p>Explora nuestra selección de cursos y amplía tus conocimientos en el campo que desees.</p>
-            <a href="registrarse.php" class="btn">Registrarse</a>
+            <a href="Cursos.html" class="btn">Ver Cursos</a>
         </div>
     </section>
 
@@ -174,10 +172,9 @@ body {
       </div>
       --->
 
-    
-
 
   </main>
+
 
   <footer>
     <div class="container">

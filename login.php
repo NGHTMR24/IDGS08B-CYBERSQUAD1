@@ -3,46 +3,66 @@ session_start();
 if($_POST){
     include("./bd.php");
     $conexion = mysqli_connect("localhost", "root", "", "sabaticos");
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $usuario = $_POST["usuario"];
+        $correo = $_POST["correo"];
         $password = $_POST["password"];
-        // Consulta para verificar las credenciales
-        $consulta = "SELECT * FROM usuario WHERE usuario = '$usuario' AND password = '$password'";
-        $resultado = mysqli_query($conexion, $consulta);
-        $fila = mysqli_fetch_assoc($resultado);
-        if ($fila) {
-            // Credenciales válidas, iniciar sesión y redirigir según el tipo de usuario
-            $_SESSION["usuario"] = $fila["usuario"];
-            $_SESSION["password"] = $fila["password"];
-            $_SESSION["tipo"] = $fila["tipo"]; // Agrega esta línea para establecer el tipo de usuario
-            $_SESSION["id"] = $fila["id"];
-            $_SESSION["correo"] = $fila["correo"]; // Guarda el correo electrónico en la sesión
-            // Obtener el ID del usuario
-            $id_usuario = $fila["id"];
-            $_SESSION["id"] = $fila["id"];
 
-            // Obtener la idFichaInscripcion
-            $sentencia_ficha = $conexion->prepare("SELECT idFichaInscripcion FROM fichainscripcion WHERE id_usuario=?");
-            $sentencia_ficha->bind_param("i", $id_usuario);
-            $sentencia_ficha->execute();
-            $resultado_ficha = $sentencia_ficha->get_result();
-            $registro_ficha = $resultado_ficha->fetch_assoc();
-            $idFichaInscripcion = $registro_ficha['idFichaInscripcion'];
-
-            // Resto del código...
-            if ($fila["tipo"] == "alumno") {
-                header("Location: index.php");
-                exit();
-            } elseif ($fila["tipo"] == "maestro") {
-                header("Location: index_M.php");
-                exit();
-            } elseif ($fila["tipo"] == "administrador") {
-                header("Location: index_A.php");
-                exit();
-            }
+        // Validación de la contraseña
+        if (!preg_match("/^.{8,}$/", $password)) {
+            $mensaje_error = "La contraseña debe tener al menos 8 caracteres.";
         } else {
-            // Credenciales inválidas, mostrar mensaje de error
-            $mensaje_error = "Usuario o contraseña incorrectos";
+            $pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+            if (!preg_match($pattern, $correo)) {
+                $mensaje_error = "Formato de correo electrónico inválido.";
+            }else{
+      
+                
+                $consulta = "SELECT * FROM usuario WHERE correo = '$correo'";
+                $resultado = mysqli_query($conexion, $consulta);
+                $fila = mysqli_fetch_assoc($resultado);
+          
+                if ($fila) {
+                    
+                    if (password_verify($password, $fila['password'])) {
+                        
+                        $_SESSION["usuario"] = $fila["usuario"];
+                        $_SESSION["password"] = $fila["password"];
+                        $_SESSION["tipo"] = $fila["tipo"]; 
+                        $_SESSION["id"] = $fila["id"];
+                        $_SESSION["correo"] = $fila["correo"]; 
+                        
+                        $id_usuario = $fila["id"];
+                        $_SESSION["id"] = $fila["id"];
+
+                        // Obtener la idFichaInscripcion
+                        $sentencia_ficha = $conexion->prepare("SELECT idFichaInscripcion FROM fichainscripcion WHERE id_usuario=?");
+                        $sentencia_ficha->bind_param("i", $id_usuario);
+                        $sentencia_ficha->execute();
+                        $resultado_ficha = $sentencia_ficha->get_result();
+                        $registro_ficha = $resultado_ficha->fetch_assoc();
+                        $idFichaInscripcion = $registro_ficha['idFichaInscripcion'];
+
+                        
+                        if ($fila["tipo"] == "alumno") {
+                            header("Location: index.php");
+                            exit();
+                        } elseif ($fila["tipo"] == "maestro") {
+                            header("Location: index_M.php");
+                            exit();
+                        } elseif ($fila["tipo"] == "administrador") {
+                            header("Location: index_A.php");
+                            exit();
+                        }
+                    } else {
+                        
+                        $mensaje_error = "Correo o contraseña incorrectos";
+                    }
+                } else {
+                    
+                    $mensaje_error = "Correo o contraseña incorrectos";
+                }
+            }
         }
     }
 }
@@ -59,12 +79,14 @@ if($_POST){
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="imagenes/">
     <link rel="stylesheet" href="estilos.css">
+
+    
 </head>
 <body>
 <style>
   body {
-    background-color: #ffdd90;
-    background-image: url("a.jpg");
+    background-color: #e4e4f3;
+    background-color: #e4e4f3;
   }
 </style>
 <header>
@@ -74,10 +96,8 @@ if($_POST){
         <nav>
         <ul>
                 <li><a href="inicio.php">Inicio</a></li>
-                <li><a href="cursos.php">Cursos</a></li>
                 <li><a href="registrarse.php">Registrarse</a></li>
                 <li><a href="login.php">Inicio de session</a></li>
-                <li><a href="contacto.php">Contacto</a></li>
                 <li><a href="Faq.php">FAQ</a></li>
           </ul>
         </nav>
@@ -90,7 +110,7 @@ if($_POST){
 </br></br>
 <style>
     .card {
-      background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+      background: linear-gradient(90deg, #ECF2FF 0%, #F1F6F9 100%);
     }
     .btn-primary {
       background-color: blue;
@@ -119,15 +139,15 @@ if($_POST){
                 <?php } ?>                  
                 <form action="" method="post">
                     <div class="mb-3">
-                      <label for="usuario" class="form-label"><strong>Usuario:</strong></label>
-                      <input type="text"
-                      class="form-control" name="usuario" id="usuario" placeholder="Escriba su nombre de usuario." maxlength="16">
+                      <label for="correo" class="form-label"><strong>Correo:</strong></label>
+                      <input type="text" class="form-control" name="correo" id="correo" placeholder="Escriba su correo electronico" maxlength="16">
                     </div>
+                    <div id="correo-error" class="invalid-feedback"></div>
                     <div class="mb-3">
                       <label for="password" class="form-label"><strong>Contraseña:</strong></label>
-                      <input type="password"
-                      class="form-control" name="password" id="password" placeholder="Escriba su contraseña" maxlength="16">
+                      <input type="password" class="form-control" name="password" id="password" placeholder="Escriba su contraseña" maxlength="16">
                     </div>
+                    <div id="password-error" class="invalid-feedback"></div>
                     <div class="space">
                     <div class="space">
                       <button type="submit" class="btn btn-warning" style="width: 100px; display: inline-block; margin: 0 0px;">Entrar</button>
@@ -151,6 +171,49 @@ if($_POST){
 </body>
 
 </html>
+
+<script>
+
+    
+    var valiCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    
+    document.getElementById('correo').addEventListener('input', function() {
+      var correoInput = this.value.trim();
+      var correoError = document.getElementById('correo-error');
+      if (!valiCorreo.test(correoInput)) {
+        correoError.textContent = 'El formato del correo electrónico no es válido.';
+        correoError.style.display = 'block';
+      } else {
+        correoError.style.display = 'none';
+      }
+    });
+
+    
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      var correoInput = document.getElementById('correo').value.trim();
+      var passwordInput = document.getElementById('password').value.trim();
+      var correoError = document.getElementById('correo-error');
+      var passwordError = document.getElementById('password-error');
+
+      if (!valiCorreo.test(correoInput)) {
+        correoError.textContent = 'El formato del correo electrónico no es válido.';
+        correoError.style.display = 'block';
+        event.preventDefault(); 
+      } else {
+        correoError.style.display = 'none';
+      }
+
+      if (passwordInput.length < 8) {
+        passwordError.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+        passwordError.style.display = 'block';
+        event.preventDefault(); 
+      } else {
+        passwordError.style.display = 'none';
+      }
+    });
+  </script>
+
 <script>
     function limpiarCampos() {
         document.getElementById('usuario').value = '';
@@ -169,7 +232,7 @@ if($_POST){
     });
 </script>
 <script>
-    // Función para ocultar el mensaje de error después de 5 segundos
+    
     setTimeout(function() {
         var mensajeError = document.getElementById('mensaje-error');
         if (mensajeError) {
